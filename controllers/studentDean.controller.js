@@ -1,9 +1,11 @@
 const async = require('async');
 const bcrypt = require('bcrypt');           
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 const logger = require('./../helper/logger.helper');
 const User = require('./../models/User'); // Import the User model
 const studentDeanSchema = require('./../schema/studentdean.json');
+const Sessions = require('../models/Sessions');
 // NOTE :: NEED to think of password key not to send    
 // & Req-Res sanitize
 
@@ -46,7 +48,7 @@ const login = async (req,res)=>{
         let finalResult = {};
         async.waterfall([
             //Find user by universityId  & Validate Password
-            async function (calllback) {
+            async (calllback) => {
                 try {                    
                     finalResult.userdetails = await User.findOne({ universityId: req.body.universityId });
                     var result = bcrypt.compareSync(req.body.password, finalResult.userdetails.password);
@@ -60,7 +62,7 @@ const login = async (req,res)=>{
                 }
             },
             //Generate Authenticate Token
-            async function (calllback) {
+            async (calllback) => {
                 try {
                     let tokenObj = {
                         _id: finalResult.userdetails._id,
@@ -88,24 +90,30 @@ const login = async (req,res)=>{
 
 /***
  * @description : STEP 2 : This Function will check Availibility of sessions
+ * @param {*} req dean_id : id of dean
  */
 let chekckAvilableSessions = async (req,res)=>{
     try {
-        logger.info("chekckAvilableSessions")
-        return res.json({ status: true });
+        let deansAvailableSessions = await Sessions.find({dean_id:req.body.dean_id})
+        return res.json({ status: true,data:deansAvailableSessions, message:"Availalbe sessions of Dean",error:null });
     } catch (error) {
-        return res.json({ status: false });
+        return res.json({ status: false,data:[],mesage:"No Available Sessions",data:[],error:null });
     }
 }
 
 /**
- * @description : Step 3 : A picks one of the above slots and books.
+ * @description : Step 3 : A picks one of the above slots and books. 
+ * @param {*} req session_id : id of available which has came in previous API
+ * Here User id will be taken from session
  */
 
 let bookSlot = async (req, res) => {
     try {
-        logger.info("bookSlot")
-        return res.json({ status: true });
+        logger.info("bookSlot::",req.body)
+        let result = await Sessions.updateOne(req.body.session_id,{"ccc":"ccc"},{new:true});
+        // let result = await Sessions.findByIdAndUpdate(req.body.session_id,{"ccc":"ccc"},{new:true});
+        console.log("result::",result)
+        return res.json({ status: true,data:result });
     } catch (error) {
         return res.json({ status: false });
     }
@@ -119,10 +127,11 @@ let bookSlot = async (req, res) => {
 
 let checkBookedSessionsofDean = async (req, res) => {
     try {
-        logger.info("checkBookedSessionsofDean")
-        return res.json({ status: true });
+        let currentDate = moment(); 
+        let result = await Sessions.find({dean_id:req.body.dean_id,start_time:{$gt: currentDate},student_id:{$exists: true}})
+        return res.json({ status: true,data:result,mesage:"Booked sessions",error:null });
     } catch (error) {
-        return res.json({ status: false });
+        return res.json({ status: false,data:[],mesage:"No booked sessions",error:null });
     }
 }
 /**

@@ -16,6 +16,7 @@ module.exports = async function (req, res, next) {
             console.error('JWT verification failed:', error.message);
             return res.status(505).send({ status: true, message: "Un-Authorized request" });
         } else {
+            req.user = decoded;
             next();
         }
     });

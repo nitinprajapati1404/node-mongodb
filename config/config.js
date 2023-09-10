@@ -31,9 +31,9 @@ db.on('error', (err) => {
     console.error(`MongoDB connection error: ${err}`);
 });
 
-db.on('disconnected', () => {
-    console.log('Disconnected from MongoDB');
-});
+// db.on('disconnected', () => {
+//     console.log('Disconnected from MongoDB');
+// });
 
 // Gracefully close the MongoDB connection on application termination
 process.on('SIGINT', () => {
