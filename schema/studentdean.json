@@ -1,0 +1,38 @@
+{
+    "create": {
+		"req": {
+			"additionalProperties": false,
+			"properties": {
+				"email": {
+					"type": ["string"]
+				},
+				"role": {
+					"type": ["string"],
+                    "enum": ["student", "dean"]
+				},
+				"password": {
+					"type": ["string"]
+				}
+			},
+			"required": ["email", "role", "password"]
+		},
+		"res": {
+			"additionalProperties": false,
+			"properties": {
+				"status": {
+					"type": "boolean"
+				},
+				"message": {
+					"type": "string"
+				},
+				"error": {
+					"type": ["object","null"]
+				},
+                "data": {
+					"type": ["object","null"]
+				}
+			},
+			"required": ["status", "message", "error", "data"]
+		}
+	}
+}

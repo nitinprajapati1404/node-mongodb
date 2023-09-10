@@ -4,7 +4,7 @@ global.router = express.Router();
 const bodyParser = require('body-parser')
 
 // Create an Express application
-const app = express();
+global.app = express();
 
 // ENV VARIABLE SETUP START
 
@@ -28,6 +28,9 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const responseOk = require(`./policies/ok`);
+app.use(responseOk('on'));
 
 // Define a sample route
 app.get('/', (req, res) => {

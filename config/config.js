@@ -3,7 +3,6 @@ let is_debug = false;
 if (process.env.is_DEBUG === 'true'){
     is_debug = true;
 }
-console.log("here")
 const mongoose = require('mongoose');
 
 // Define MongoDB connection URL
@@ -25,7 +24,7 @@ const db = mongoose.connection;
 
 // Event handlers for Mongoose connection
 db.on('connected', () => {
-    console.log(`Connected 1 to MongoDB at ${dbURI}`);
+    console.log(`Connected to MongoDB at ${dbURI}`);
 });
 
 db.on('error', (err) => {
