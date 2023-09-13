@@ -42,4 +42,4 @@ Please check package json for Dependencies
 
 
 
-
+POSTMAN COLLECTION LINK : https://api.postman.com/collections/4749638-f0758ccc-6b42-43c4-9a7a-3803cabe6585?access_key=PMAT-01HA7C03XDAT7KDY663KB6XTQ0

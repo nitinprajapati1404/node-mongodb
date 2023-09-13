@@ -12,27 +12,65 @@
 				},
 				"password": {
 					"type": ["string"]
+				},
+				"first_name": {
+					"type": ["string"]
+				},
+				"last_name": {
+					"type": ["string"]
 				}
 			},
-			"required": ["email", "role", "password"]
-		},
-		"res": {
+			"required": ["email", "role", "password","first_name","last_name"]
+		}
+	},
+	"login": {
+		"req": {
 			"additionalProperties": false,
 			"properties": {
-				"status": {
-					"type": "boolean"
+				"universityId": {
+					"type": ["string"]
 				},
-				"message": {
-					"type": "string"
-				},
-				"error": {
-					"type": ["object","null"]
-				},
-                "data": {
-					"type": ["object","null"]
+				"password": {
+					"type": ["string"]
 				}
 			},
-			"required": ["status", "message", "error", "data"]
+			"required": ["universityId", "password"]
+		}
+	},
+	"chekckAvilableSessions":{
+		"req": {
+			"additionalProperties": false,
+			"properties": {
+				"dean_id": {
+					"type": ["string"]
+				}
+			},
+			"required": ["dean_id"]
+		}
+	},
+	"bookSlot":{
+		"req": {
+			"additionalProperties": false,
+			"properties": {
+				"session_id": {
+					"type": ["string"]
+				}
+			},
+			"required": ["session_id"]
+		}
+	},
+	"updateTimeManual":{
+		"req": {
+			"additionalProperties": false,
+			"properties": {
+				"dean_id": {
+					"type": ["string"]
+				},
+				"student_id": {
+					"type": ["string"]
+				}
+			},
+			"required": ["dean_id","student_id"]
 		}
 	}
 }

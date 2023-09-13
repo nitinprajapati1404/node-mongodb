@@ -29,9 +29,6 @@ app.use(function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const responseOk = require(`./policies/ok`);
-app.use(responseOk('on'));
-
 // Define a sample route
 app.get('/', (req, res) => {
     res.send('Hello, MongoDB!');

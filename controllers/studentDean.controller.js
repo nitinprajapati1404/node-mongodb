@@ -21,17 +21,19 @@ const create =  async (req,res)=>{
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
-            universityId: req.body.email
+            universityId: req.body.email,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
         });
         let userCreated = await newUser.save();
         if (userCreated) {
-            return res.ok(studentDeanSchema.create.res, { status: true, message: "User Created Successfully", error: null, data: userCreated })
+            return res.json({ status: true, message: "User Created Successfully", error: null, data: {} })
+            
         } else {
-            return res.ok(studentDeanSchema.create.res, { status: false, message: "User not created!", error: null, data: {} })
+            return res.json({ status: false, message: "User not created!", error: null, data: {} })
         }
-    }catch(error){
-        // logger.error("user create ::: ",error);
-        return res.ok(studentDeanSchema.create.res, { status: false, message:"Something went wrong!",error:null,data:{} })   
+    }catch(error){        
+        return res.json({ status: false, message: "Something went wrong!", error: error, data: {} })
     }
 }
 
@@ -46,44 +48,38 @@ const create =  async (req,res)=>{
 const login = async (req,res)=>{
     try{
         let finalResult = {};
+
         async.waterfall([
             //Find user by universityId  & Validate Password
-            async (calllback) => {
-                try {                    
-                    finalResult.userdetails = await User.findOne({ universityId: req.body.universityId });
-                    var result = bcrypt.compareSync(req.body.password, finalResult.userdetails.password);
-                    console.log("result::", result)
-                    if (!result) {
-                        calllback({ status: false, message:"User Not Found"});    
-                    }
-                    calllback();
-                } catch (error) {
-                    calllback({ status: false, message: "User Not Found" });
+            async (calllback) => {                                    
+                finalResult.userdetails = await User.findOne({ universityId: req.body.universityId }, { _id: 1, universityId: 1, password: 1, role: 1 });
+                var result = bcrypt.compareSync(req.body.password, finalResult.userdetails.password);
+                if (!result) {
+                    calllback({ status: false, message:"User Not Found"});    
                 }
+                calllback();
+                
             },
             //Generate Authenticate Token
             async (calllback) => {
-                try {
-                    let tokenObj = {
-                        _id: finalResult.userdetails._id,
-                        universityId: finalResult.userdetails.universityId,
-                        role: finalResult.userdetails.role,
-                    }
-                    finalResult.token = jwt.sign(JSON.stringify(tokenObj), process.env.jwtsecretkey);
-                   calllback()
-                } catch (error) {
-                    calllback(error);
+                let tokenObj = {
+                    _id: finalResult.userdetails._id,
+                    universityId: finalResult.userdetails.universityId,
+                    role: finalResult.userdetails.role,
                 }
+                finalResult.token = jwt.sign(JSON.stringify(tokenObj), process.env.jwtsecretkey);
+                calllback()
             },
         ], (error) => {
             if (error) {
                 return res.json({ status: false, message: error.message});
             }
-            return res.json({ status: true,message:"User logged in succesfully", data: finalResult.userdetails, token: finalResult.token });
+            return res.json({ status: true, message: "User logged in succesfully", data: { _id: finalResult.userdetails ._id}, token: finalResult.token,error:null });
         })
 
     }catch(error){
-        return res.json({status:false, message : "User not found",data:{},error:{},token:""});
+        console.log("error:::",error);
+        return res.json({status:false, message : "User not found",data:{},error:null,token:""});
         // return res.ok(studentDeanSchema.create.res, { status: false, message: "Something went wrong!", error: null, data: {} })   
     }
 } 
@@ -94,7 +90,8 @@ const login = async (req,res)=>{
  */
 let chekckAvilableSessions = async (req,res)=>{
     try {
-        let deansAvailableSessions = await Sessions.find({dean_id:req.body.dean_id})
+        let currentDate = moment(); 
+        let deansAvailableSessions = await Sessions.find({ dean_id: req.query.dean_id, start_time: { $gt: currentDate }, student_id: { $exists: false } })
         return res.json({ status: true,data:deansAvailableSessions, message:"Availalbe sessions of Dean",error:null });
     } catch (error) {
         return res.json({ status: false,data:[],mesage:"No Available Sessions",data:[],error:null });
@@ -109,12 +106,10 @@ let chekckAvilableSessions = async (req,res)=>{
 
 let bookSlot = async (req, res) => {
     try {
-        logger.info("bookSlot::",req.body)
-        let result = await Sessions.updateOne(req.body.session_id,{"ccc":"ccc"},{new:true});
-        // let result = await Sessions.findByIdAndUpdate(req.body.session_id,{"ccc":"ccc"},{new:true});
-        console.log("result::",result)
-        return res.json({ status: true,data:result });
+        await Sessions.updateOne({ _id: req.body.session_id },{"student_id":req.user._id},{new:true});        
+        return res.json({ status: true });
     } catch (error) {
+        console.log("error::",error);
         return res.json({ status: false });
     }
 }
@@ -128,7 +123,7 @@ let bookSlot = async (req, res) => {
 let checkBookedSessionsofDean = async (req, res) => {
     try {
         let currentDate = moment(); 
-        let result = await Sessions.find({dean_id:req.body.dean_id,start_time:{$gt: currentDate},student_id:{$exists: true}})
+        let result = await Sessions.find({ dean_id: req.user._id, start_time: { $gt: currentDate }, student_id: { $exists: true } }).populate('student_id', '_id universityId first_name last_name'); 
         return res.json({ status: true,data:result,mesage:"Booked sessions",error:null });
     } catch (error) {
         return res.json({ status: false,data:[],mesage:"No booked sessions",error:null });
@@ -149,10 +144,23 @@ let checkBookedSessionsofDean = async (req, res) => {
  * Here we can pass extra parameter of time which can handle this case!!
  */
 
+/** update manual date of Student A's Dean's Session */
+let updateTimeManual = async (req,res)=>{
+    try {
+        let oldDate = moment().subtract(7, 'd')
+        let oldDate1hr = moment().subtract(7, 'd').add(1,'h');
+        await Sessions.updateOne({ dean_id: req.body.dean_id, "student_id": req.body.student_id }, { "start_time": oldDate, end_time: oldDate1hr }, { new: true });
+        res.json({ status: true });
+    } catch (error) {
+        res.json({status:false});
+    }
+}
+
 module.exports = {
     create,
     login,
     chekckAvilableSessions,
     bookSlot,
-    checkBookedSessionsofDean  
+    checkBookedSessionsofDean,
+    updateTimeManual  
 }
