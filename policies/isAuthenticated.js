@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const logger = require('./../helper/logger.helper');
 /**
  * isAuthenticated
  * @description :: Policy to chekck is requet comming from Authenticate source

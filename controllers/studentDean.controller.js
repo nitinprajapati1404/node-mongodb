@@ -2,7 +2,6 @@ const async = require('async');
 const bcrypt = require('bcrypt');           
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const logger = require('./../helper/logger.helper');
 const User = require('./../models/User'); // Import the User model
 const studentDeanSchema = require('./../schema/studentdean.json');
 const Sessions = require('../models/Sessions');
@@ -78,9 +77,7 @@ const login = async (req,res)=>{
         })
 
     }catch(error){
-        console.log("error:::",error);
         return res.json({status:false, message : "User not found",data:{},error:null,token:""});
-        // return res.ok(studentDeanSchema.create.res, { status: false, message: "Something went wrong!", error: null, data: {} })   
     }
 } 
 
@@ -109,7 +106,6 @@ let bookSlot = async (req, res) => {
         await Sessions.updateOne({ _id: req.body.session_id },{"student_id":req.user._id},{new:true});        
         return res.json({ status: true });
     } catch (error) {
-        console.log("error::",error);
         return res.json({ status: false });
     }
 }
@@ -144,7 +140,7 @@ let checkBookedSessionsofDean = async (req, res) => {
  * Here we can pass extra parameter of time which can handle this case!!
  */
 
-/** update manual date of Student A's Dean's Session */
+/** Step 13 :  update manual date of Student A's Dean's Session */
 let updateTimeManual = async (req,res)=>{
     try {
         let oldDate = moment().subtract(7, 'd')

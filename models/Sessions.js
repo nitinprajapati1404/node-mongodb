@@ -43,12 +43,6 @@ const SessionsSchema = new Schema({
         default: Date.now, // Set default value to the current date
     },
 });
-
-// "day_of_week": "Thursday", // Day of the week for the time slot
-//   "start_time": "10:00 AM",
-//   "end_time": "11:00 AM",
-//   "is_available": true, // Indicates whether the time slot is available
-
 // Create a model from the schema
 const Sessions = mongoose.model('Sessions', SessionsSchema);
 

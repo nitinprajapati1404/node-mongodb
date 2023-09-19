@@ -51,13 +51,6 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-// userSchema.set('toJSON', {
-//     transform: function (doc, ret, opt) {
-//         delete ret['password']
-//         return ret
-//     }
-// })
-// Create a model from the schema
 const User = mongoose.model('User', userSchema);
 
 // Export the model for use in your application

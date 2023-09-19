@@ -6,7 +6,6 @@ if (process.env.is_DEBUG === 'true'){
 const mongoose = require('mongoose');
 
 // Define MongoDB connection URL
-console.log("process.env.MONGO_CONN_URL::", process.env.MONGO_CONN_URL)
 const dbURI = process.env.MONGO_CONN_URL;
 
 //IF YOUR MONDO DB IS SECURED THEN PLEASE CHANGE in env URL in following format :
@@ -38,7 +37,6 @@ db.on('error', (err) => {
 // Gracefully close the MongoDB connection on application termination
 process.on('SIGINT', () => {
     db.close(() => {
-        console.log('MongoDB connection closed due to app termination');
         process.exit(0);
     });
 });
