@@ -15,8 +15,8 @@ Postman setup has been classfied in following steps
     Step 1 : Login with Student A
     Step 2 : Check availability of Session for Student A With Dean A
     Step 3 : Book Slot For Student A With Daan A
-    Step 4 : Check availability of Session WIth Dean B for Student A
-    Step 5 : Book Slot For Student B With Daan A
+    Step 4 : Check availability of Session  for Student A WIth Dean B
+    Step 5 : Book Slot For Student A With Dean B
     Step 6 : Login Dean A
     Sept 7 : Check Booked Sessions of Dean A
     Step 8 : Login Student B

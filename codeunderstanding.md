@@ -20,3 +20,9 @@ This Project consists of Following Folders
 
 ## APIs Understanding
     Kindly please check controllers files for understaind of each function
+
+## Export Data
+    mongodump -d <db-name> -o <path>
+    ex . mongodump -d testdb -o /opt/testappwithmongo/
+
+NOTE : testdb/ folder consists of final data after all operations!    

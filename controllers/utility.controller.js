@@ -10,7 +10,7 @@ let generateSessionsOfDean = async (req,res)=>{
     try {
         async.waterfall([
             async (calllback) =>{
-                deans = await User.find({role:"dean"}).select({_id:1,universityId:1});
+                deans = await User.find({role:"dean"}).select({_id:1,universityId:1,first_name:1,last_name:1});
                 calllback(null);
             },
             async (calllback) =>{

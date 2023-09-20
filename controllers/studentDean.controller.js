@@ -26,7 +26,7 @@ const create =  async (req,res)=>{
         });
         let userCreated = await newUser.save();
         if (userCreated) {
-            return res.json({ status: true, message: "User Created Successfully", error: null, data: {} })
+            return res.json({ status: true, message: "User Created Successfully", error: null, data: { _id: userCreated._id} })
             
         } else {
             return res.json({ status: false, message: "User not created!", error: null, data: {} })

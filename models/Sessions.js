@@ -13,14 +13,6 @@ const SessionsSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
-    first_name: {
-        type: String,
-        required: true,
-    },
-    last_name: {
-        type: String,
-        required: true,
-    },
     day_of_week : {
         type: String,
         enum: ['thursday', 'friday'],

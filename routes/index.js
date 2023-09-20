@@ -15,7 +15,7 @@ router.post('/user', [validateRequest(studentDeanSchema.create.req)], studentDea
 router.post('/login', [validateRequest(studentDeanSchema.login.req)], studentDean.login);
 router.get('/chekckAvilableSessions', [validateRequest(studentDeanSchema.chekckAvilableSessions.req),isAuthenticated], studentDean.chekckAvilableSessions);
 router.post('/bookSlot', [validateRequest(studentDeanSchema.bookSlot.req), isAuthenticated], studentDean.bookSlot);
-router.get('/checkBookedSessionsofDean', [validateRequest(studentDeanSchema.chekckAvilableSessions.req), isAuthenticated], studentDean.checkBookedSessionsofDean);
+router.get('/checkBookedSessionsofDean', [isAuthenticated], studentDean.checkBookedSessionsofDean);
 router.post('/updateTimeManual', [validateRequest(studentDeanSchema.updateTimeManual.req), isAuthenticated], studentDean.updateTimeManual);
 /** End All steps  */
 
